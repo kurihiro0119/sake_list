@@ -18,7 +18,6 @@ export const useUserChanged = () => {
                 const hasuraClaims = idTOkenResult.claims[HASURA_TOKEN_KEY]
                 if (hasuraClaims) {
                     cookie.set('token', token, { path: '/' })
-                    router.push('/tasks')
                 }
             }
         })

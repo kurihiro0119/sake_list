@@ -9,10 +9,13 @@ import {
   CREATE_NEWS,
   DELETE_NEWS,
   UPDATE_NEWS,
+  CREATE_SAKE,
+  UPDATE_SAKE,
+  DELETE_SAKE,
 } from '../queries/queries'
-import { Task, EditTask, News, EditNews } from '../types/types'
+import { Task, EditTask, News, EditNews, EditSake, Sake } from '../types/types'
 import { useDispatch } from 'react-redux'
-import { resetEditedTask, resetEditedNews } from '../slices/uiSlice'
+import { resetEditedTask, resetEditedNews, resetEditedSake } from '../slices/uiSlice'
 
 const cookie = new Cookie()
 const endpoint = process.env.NEXT_PUBLIC_HASURA_ENDPOINT
@@ -136,6 +139,60 @@ export const useAppMutate = () => {
       },
     }
   )
+  const createSakeMutation = useMutation(
+    (acidity: string) =>
+      graphQLClient.request(CREATE_SAKE, { acidity: acidity }),
+    {
+      onSuccess: (res) => {
+        const previousSake = queryClient.getQueryData<Sake[]>('sake')
+        if (previousSake) {
+          queryClient.setQueryData('sake', [
+            ...previousSake,
+            res.insert_sakes,
+          ])
+        }
+        dispatch(resetEditedSake())
+      },
+      onError: () => {
+        dispatch(resetEditedSake())
+      },
+    }
+  )
+  const updateSakeMutation = useMutation(
+    (sake: EditSake) => graphQLClient.request(UPDATE_SAKE, sake),
+    {
+      onSuccess: (res, variables) => {
+        const previousSake = queryClient.getQueryData<Sake[]>('sake')
+        if (previousSake) {
+          queryClient.setQueryData<Sake[]>(
+            'sake',
+            previousSake.map((sake) =>
+              sake.id === variables.id ? res.update_sakes_by_pk : sake
+            )
+          )
+        }
+        dispatch(resetEditedSake())
+      },
+      onError: () => {
+        dispatch(resetEditedSake())
+      },
+    }
+  )
+  const deleteSakesMutation = useMutation(
+    (id: string) => graphQLClient.request(DELETE_SAKE, { id: id }),
+    {
+      onSuccess: (res, variables) => {
+        const previousSake = queryClient.getQueryData<Sake[]>('sakes')
+        if (previousSake) {
+          queryClient.setQueryData<Sake[]>(
+            'sakes',
+            previousSake.filter((sakes) => sakes.id !== variables)
+          )
+        }
+        dispatch(resetEditedSake())
+      },
+    }
+  )
   return {
     createTaskMutation,
     updateTaskMutation,
@@ -143,5 +200,8 @@ export const useAppMutate = () => {
     createNewsMutation,
     updateNewsMutation,
     deleteNewsMutation,
+    createSakeMutation,
+    updateSakeMutation,
+    deleteSakesMutation
   }
 }
