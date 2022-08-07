@@ -9,6 +9,7 @@ import { NewsListMemo } from '../components/NewsList'
 import { NewsEditMemo } from '../components/NewsEdit'
 import { TaskListMemo } from '../components/TaskList'
 import { TaskEditMemo } from '../components/TaskEdit'
+import { SakeListMemo } from '../components/SakeList'
 
 
 const Tasks = () => {
@@ -27,6 +28,10 @@ const Tasks = () => {
                         router.push('/')
                     }}
                 />
+            <p className='mt-10 mb-5 text-blue-500 cursor-pointer'>Sake Edit</p>
+            <div className="grid grid-cols-2 gap-40">
+                <SakeListMemo />
+            </div>
             <p className='mt-10 mb-5 text-blue-500 cursor-pointer'>News Edit</p>
             <div className="grid grid-cols-2 gap-40">
                 <NewsListMemo />
