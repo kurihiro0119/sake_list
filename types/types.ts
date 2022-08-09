@@ -1,5 +1,3 @@
-import { Timestamp } from '@google-cloud/firestore'
-import exp from 'constants'
 
 export interface News {
     id: string
